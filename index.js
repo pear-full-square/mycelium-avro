@@ -11,7 +11,8 @@
 //   fullnameOf(uri), uriOf(fullname), partsOf(fullname)
 //                                a name: its URI and its AVRO fullname, exact
 //                                both ways; its core type and its variant
-//   valid(type, value)           { valid } or { valid: false, problems }
+//   valid(type, value)           { valid } or { valid: false, problems };
+//                                strict: no field its type does not name
 //   readAs(writer, reader, value, { like })
 //                                a value of one type read as another
 //   is(writer, reader)           { is } or { is: false, why }: AVRO's own

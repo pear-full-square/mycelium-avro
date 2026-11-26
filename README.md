@@ -35,6 +35,9 @@ isLike(writer, reader)                 // { like, aliases } or { like: false, wh
   module is given the schemas.
 - **Whatever the encoding**: `valid` and `readAs` take a value as it is
   in memory, a parsed JSON document among them.
+- **Strict** (the human, 2026-11-26: "you can move to strict now, not
+  lenient"): a value with a field its type does not name is not valid,
+  the place said; nothing passes unnamed.
 - **Read as another, through AVRO's binary**: `readAs` writes the value
   with the writer's type and reads it with the reader's resolver, so
   the rules applied are AVRO's own, not a second implementation of them.

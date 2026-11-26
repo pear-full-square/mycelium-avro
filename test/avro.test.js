@@ -42,7 +42,7 @@ test('a name is its URI, exact both ways; its core type and its variant', (t) =>
   t.alike(avro.partsOf('plain'), { type: 'plain', variant: null })
 })
 
-test('a value checked against a type: a JSON value is one; where it is not, said', (t) => {
+test('a value checked against a type: a JSON value is one; where it is not, said; strict, a field not named refused', (t) => {
   const type = typeOf(ANSWER)
   t.alike(valid(type, { help: 'h', does: null, answer: ['x'] }), { valid: true }, 'a JSON value in its shape')
   t.alike(valid(type, { help: 'h', answer: [] }), { valid: true }, 'a field left out that has a default')
@@ -50,6 +50,8 @@ test('a value checked against a type: a JSON value is one; where it is not, said
   t.alike(valid(type, { help: 5, answer: ['x', 2] }), { valid: false, problems: [{ at: 'help', expected: 'string' }, { at: 'answer/1', expected: 'string' }] }, 'not one: each place, and what was expected there')
   t.alike(valid(type, { does: null, answer: [] }).problems.map(p => p.at), ['help'], 'a field missing, with no default')
   t.absent(valid(type, 'text').valid, 'not a record at all')
+  t.alike(valid(type, { help: 'h', answer: [], more: 1 }), { valid: false, problems: [{ at: '', expected: 'haiccing.basePackageHelp.annotateAnswer' }] }, 'strict: a field the type does not name: not valid, the record said')
+  t.alike(valid(typeOf({ type: 'record', name: 'a.Outer', fields: [{ name: 'inner', type: ANSWER }] }), { inner: { help: 'h', answer: [], extra: true } }).problems.map(p => p.at), ['inner'], 'strict all the way down: the place said')
   t.alike(valid(typeOf('long'), 7), { valid: true }, 'a plain type')
 })
 
