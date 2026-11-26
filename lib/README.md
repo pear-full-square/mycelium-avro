@@ -2,6 +2,8 @@
 
 The engine's parts: the fingerprint, the names, the types, the values.
 
+## Parts
+
 - `fingerprint.js`: CRC-64-AVRO (Rabin) over a schema's Parsing
   Canonical Form, 16 hex digits; its 8 bytes little-endian (`bytesOf`,
   `hexOf`).
