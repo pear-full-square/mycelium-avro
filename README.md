@@ -68,13 +68,6 @@ isLike(writer, reader)                 // { like, aliases } or { like: false, wh
 - **Copied from `mycelium-value-avro`** (2026-11-26), its types, names
   and fingerprints as they were; that module is not changed and not
   used.
-- **Its text encoder under Bare** (`lib/encoding.js`): Bare has no
-  `TextEncoder`, and the one the library's copy brings for Bare says a
-  text was read whole when only its first 4096 bytes fitted: a longer
-  text was written cut short, no error. Ours is put in place before the
-  library loads and says what it read. A module that loads the library
-  without this one first (the first build's `mycelium-value-avro`) still
-  has the fault.
 
 ## Tests
 

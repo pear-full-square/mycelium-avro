@@ -12,4 +12,4 @@ The tests of mycelium-avro, a section per file, each test by its name.
 - the logical types: json, any JSON value in memory; timestamp-millis, its ISO text
 - base64: bytes as base64 text in memory and in JSON, strictly; part of a schema's identity
 - AVRO's own types, each by a URI: avro/<name>, no schema file
-- the text encoder put in place for the library: as much as fits said as read, never part of a character
+- a long text, longer than the library's encoding buffer (4096 bytes), whole both ways
