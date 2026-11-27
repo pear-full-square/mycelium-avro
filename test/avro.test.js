@@ -16,7 +16,7 @@ const ANSWER = {
   ]
 }
 
-test('the fingerprint: CRC-64-AVRO of the Parsing Canonical Form', (t) => {
+test('the fingerprint: CRC-64-AVRO of a schema\'s contract form: what changes a read changes it, its descriptions do not', (t) => {
   // the AVRO specification's own test values (schema-tests.txt)
   t.is(BigInt('0x' + avro.fingerprintOf('"int"')).toString(), '8247732601305521295', '"int"')
   t.is(BigInt('0x' + avro.fingerprintOf('"null"')).toString(), '7195948357588979594', '"null"')
@@ -28,6 +28,16 @@ test('the fingerprint: CRC-64-AVRO of the Parsing Canonical Form', (t) => {
   t.not(avro.fingerprint(typeOf({ ...ANSWER, name: 'splectral.other.annotateAnswer' })), avro.fingerprint(t2), 'the full name is part of it: a variant, its own fingerprint')
   t.is(avro.hexOf(avro.bytesOf(avro.fingerprint(t2))), avro.fingerprint(t2), 'its 8 bytes and back')
   t.is(avro.wholeOf(t1).doc, 'kept out', 'the schema whole keeps what the canonical form leaves out')
+  // its contract form: the whole without its descriptions; what a read depends on is part of it
+  t.is(avro.contractOf(t1), avro.contractOf(t2), 'the contract form: the same with and without descriptions')
+  t.is(avro.fingerprint(t2), avro.fingerprintOf(avro.contractOf(t2)), 'the fingerprint: of the contract form')
+  const withDefault = typeOf({ ...ANSWER, fields: ANSWER.fields.map(f => (f.name === 'help' ? { ...f, default: 'none' } : f)) })
+  const withAlias = typeOf({ ...ANSWER, aliases: ['haiccing.basePackageHelp.answerBefore'] })
+  const stamped = { type: 'record', name: 'haiccing.x.stamped', fields: [{ name: 'at', type: 'long' }] }
+  const logical = { ...stamped, fields: [{ name: 'at', type: { type: 'long', logicalType: 'timestamp-millis' } }] }
+  t.alike([withDefault, withAlias].map(x => [avro.canonicalOf(x) === avro.canonicalOf(t2), avro.fingerprint(x) === avro.fingerprint(t2)]), [[true, false], [true, false]], 'a default, an alias: AVRO\'s canonical form the same, the fingerprint another')
+  t.alike([avro.canonicalOf(typeOf(logical)) === avro.canonicalOf(typeOf(stamped)), avro.fingerprint(typeOf(logical)) === avro.fingerprint(typeOf(stamped))], [true, false], 'a logical type: the same')
+  t.is(avro.fingerprint(typeOf({ ...stamped, fields: [{ name: 'at', type: 'long', default: 0, doc: 'when' }] })), avro.fingerprint(typeOf({ ...stamped, fields: [{ name: 'at', type: 'long', default: 0, doc: 'said otherwise' }] })), 'a description beside a default: still not part of it')
 })
 
 test('a name is its URI, exact both ways; its core type and its variant', (t) => {

@@ -5,8 +5,11 @@
 //   typeOf(schema, named)        a schema (JSON) -> its type; the named types
 //                                it refers to found in `named`, those it
 //                                defines added there
-//   canonicalOf(type)            its Parsing Canonical Form
-//   fingerprint(type)            its fingerprint, 16 hex digits
+//   canonicalOf(type)            its Parsing Canonical Form (AVRO's)
+//   contractOf(type)             its contract form: its schema whole without
+//                                its descriptions
+//   fingerprint(type)            its fingerprint, of its contract form, 16
+//                                hex digits
 //   wholeOf(type)                its schema whole, self-contained
 //   fullnameOf(uri), uriOf(fullname), partsOf(fullname)
 //                                a name: its URI and its AVRO fullname, exact
@@ -19,7 +22,7 @@
 //   isLike(writer, reader)       { like, aliases } or { like: false, why }
 //   resolverOf(writer, reader, { like })
 //                                the reader to read with and its resolver
-export { typeOf, canonicalOf, fingerprint, wholeOf, is, isLike, resolverOf, LOGICAL } from './lib/types.js'
+export { typeOf, canonicalOf, contractOf, fingerprint, wholeOf, is, isLike, resolverOf, LOGICAL } from './lib/types.js'
 export { fingerprintOf, rabin, bytesOf, hexOf, isFingerprint } from './lib/fingerprint.js'
 export { fullnameOf, uriOf, partsOf } from './lib/names.js'
 export { valid, readAs } from './lib/values.js'

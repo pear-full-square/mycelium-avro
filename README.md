@@ -45,8 +45,13 @@ isLike(writer, reader)                 // { like, aliases } or { like: false, wh
   by its name without the namespace, the core type; is-like, aliases
   generated on the reader where the core types differ, returned with
   the answer.
-- **The fingerprint, the specification's**: CRC-64-AVRO of the Parsing
-  Canonical Form; the full name is part of it, so a variant has its own.
+- **The fingerprint, of the contract form** (the human, 2026-11-27:
+  "can't you amend how the fingerprint is created?"): the
+  specification's CRC-64-AVRO, of the schema whole without its
+  descriptions, not of AVRO's Parsing Canonical Form, which also
+  leaves out defaults, aliases and logical types: those change how
+  data is read, so they change the fingerprint. The full name is part
+  of it, so a variant has its own. AVRO's own form is `canonicalOf`.
 - **Logical types**: `json` (a record of one string, its JSON text; in
   memory any JSON value) and `timestamp-millis` (in memory its ISO 8601
   text): the behaviour here; the `json` type itself is declared by a

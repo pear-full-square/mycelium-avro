@@ -4,7 +4,7 @@ The tests of mycelium-avro, a section per file, each test by its name.
 
 ## `avro.test.js`
 
-- the fingerprint: CRC-64-AVRO of the Parsing Canonical Form
+- the fingerprint: CRC-64-AVRO of a schema's contract form: what changes a read changes it, its descriptions do not
 - a name is its URI, exact both ways; its core type and its variant
 - a value checked against a type: a JSON value is one; where it is not, said; strict, a field not named refused
 - a JSON value written as one type, read as another: the writer's extra skipped, the reader's missing from its default, numbers widened
