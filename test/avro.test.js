@@ -140,3 +140,11 @@ test('AVRO\'s own types, each by a URI: avro/<name>, no schema file', (t) => {
   t.alike([avro.fullnameOf('avro/string'), avro.uriOf('avro.string')], ['avro.string', 'avro/string'], 'a name by the same mapping as any')
 })
 
+test('the text encoder put in place for the library: as much as fits said as read, never part of a character', async (t) => {
+  const { Encoder } = await import('../lib/encoding.js')
+  const e = new Encoder()
+  t.alike(e.encodeInto('x'.repeat(10), new Uint8Array(4)), { read: 4, written: 4 }, 'a text longer than the buffer: what was read said, not all of it')
+  t.alike(e.encodeInto('ab€', new Uint8Array(4)), { read: 2, written: 2 }, 'a character that does not fit whole: not written in part')
+  t.alike(e.encodeInto('a😀b', new Uint8Array(8)), { read: 4, written: 6 }, 'a pair: two units read, four bytes written')
+  t.alike([...e.encode('aé€😀')], [...Buffer.from('aé€😀')], 'encode: UTF-8, as Buffer writes it')
+})
