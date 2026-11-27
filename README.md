@@ -58,7 +58,7 @@ isLike(writer, reader)                 // { like, aliases } or { like: false, wh
   back to itself); `json` (a record of one string, its JSON text), the
   first build's, not used by what is brought to the request. Each part
   of the contract form, so of the fingerprint.
-- **AVRO's own types by a URI** (the human, 2026-11-28: "Wouldn't we
+- **AVRO's own types by a URI** (the human, 2026-11-27: "Wouldn't we
   have an AVRO URI type?"): `avro/string`, `avro/long`, ... (`null`,
   `boolean`, `int`, `long`, `float`, `double`, `bytes`, `string`):
   `primitiveOf(uri)`, `isPrimitive(uri)`; no schema file, held by
