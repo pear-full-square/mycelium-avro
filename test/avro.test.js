@@ -113,3 +113,30 @@ test('the logical types: json, any JSON value in memory; timestamp-millis, its I
   t.alike(plain(json.fromBuffer(json.toBuffer([1, { a: null }]))), [1, { a: null }], 'json: any JSON value')
   t.absent(valid(form, { args: 1, at: 'not a time' }).valid, 'a timestamp that is none: not valid')
 })
+
+test('base64: bytes as base64 text in memory and in JSON, strictly; part of a schema\'s identity', (t) => {
+  const plainBytes = { type: 'record', name: 'haiccing.x.blob', fields: [{ name: 'content', type: ['null', 'bytes'], default: null }] }
+  const encoded = { ...plainBytes, fields: [{ name: 'content', type: ['null', { type: 'bytes', logicalType: 'base64' }], default: null }] }
+  const type = typeOf(encoded)
+  t.alike(avro.valid(type, { content: 'aGk=' }), { valid: true }, 'base64 text: a value of it')
+  t.alike(avro.valid(type, { content: null }), { valid: true }, 'none')
+  t.alike(avro.valid(type, { content: '' }), { valid: true }, 'no bytes at all')
+  t.alike(['aGk', 'aGl=', 'aG k=', 'aGk_', 'hi!', 12].map(c => avro.valid(type, { content: c }).valid), [false, false, false, false, false, false], 'not it: no padding, not canonical, white space, another alphabet, no base64 at all, a number')
+  t.absent(avro.valid(type, { content: Buffer.from('hi') }).valid, 'bytes themselves: not its form in memory')
+  const back = type.fromBuffer(type.toBuffer({ content: 'aGk=' }))
+  t.is(back.content, 'aGk=', 'through AVRO\'s binary and back: the same text')
+  t.is([...type.toBuffer({ content: 'aGk=' })].join(','), [...typeOf(plainBytes).toBuffer({ content: Buffer.from('hi') })].join(','), 'in AVRO: plain bytes')
+  t.not(avro.fingerprint(type), avro.fingerprint(typeOf(plainBytes)), 'its fingerprint another than plain bytes\': how bytes are written is part of the contract')
+  t.ok(avro.contractOf(type).includes('"logicalType":"base64"'), 'in its contract form')
+})
+
+test('AVRO\'s own types, each by a URI: avro/<name>, no schema file', (t) => {
+  t.alike(avro.PRIMITIVES.map(p => avro.primitiveOf(`avro/${p}`).typeName), avro.PRIMITIVES, 'each to its type')
+  t.alike(avro.valid(avro.primitiveOf('avro/string'), 'a text'), { valid: true })
+  t.absent(avro.valid(avro.primitiveOf('avro/long'), 'a text').valid)
+  t.alike([avro.isPrimitive('avro/string'), avro.isPrimitive('avro/array'), avro.isPrimitive('haiccing/base-package-runtime/request'), avro.isPrimitive('string')], [true, false, false, false], 'which a URI is one of')
+  t.is(avro.primitiveOf('haiccing/base-package-runtime/request'), null, 'another URI: none of them')
+  t.exception(() => avro.primitiveOf('avro/array'), /not a type of AVRO's own: avro\/array \(avro\/null, /, 'avro/ and none: said')
+  t.alike([avro.fullnameOf('avro/string'), avro.uriOf('avro.string')], ['avro.string', 'avro/string'], 'a name by the same mapping as any')
+})
+

@@ -10,3 +10,5 @@ The tests of mycelium-avro, a section per file, each test by its name.
 - a JSON value written as one type, read as another: the writer's extra skipped, the reader's missing from its default, numbers widened
 - is and is-like, one mechanism: a core type's variant read as AVRO is; a different core type read as another, the aliases applied said
 - the logical types: json, any JSON value in memory; timestamp-millis, its ISO text
+- base64: bytes as base64 text in memory and in JSON, strictly; part of a schema's identity
+- AVRO's own types, each by a URI: avro/<name>, no schema file
